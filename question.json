@@ -1,0 +1,46 @@
+[
+  {
+    "question": "What is the primary core principle that differentiates Takaful from Conventional Insurance?",
+    "options": [
+      "Mutual assistance and shared risk (Tabarru')",
+      "Risk transfer to a commercial entity",
+      "Guaranteed fixed monetary returns",
+      "Unilateral commercial profit contract"
+    ],
+    "correct": 0,
+    "explanation": "Takaful relies on Tabarru' (donation) and mutual indemnity among participants rather than transferring risk to an insurer."
+  },
+  {
+    "question": "Under Conventional Insurance, what does the principle of 'Indemnity' ensure?",
+    "options": [
+      "The insured receives a payout higher than the loss",
+      "The insured is restored to the same financial position as before the loss",
+      "The policyholder earns interest on all premiums paid",
+      "The contract becomes void if no loss occurs within 1 year"
+    ],
+    "correct": 1,
+    "explanation": "Indemnity prevents policyholders from profiting from a loss; it strictly restores them to their original financial standing."
+  },
+  {
+    "question": "Which Syariah element is strictly forbidden in Takaful due to its speculative/gambling nature?",
+    "options": [
+      "Mudarabah",
+      "Wakalah",
+      "Maisir",
+      "Tabarru'"
+    ],
+    "correct": 2,
+    "explanation": "Maisir refers to gambling or pure speculation, which is prohibited in Syariah-compliant Takaful operations."
+  },
+  {
+    "question": "What is the role of the operator in a Wakalah Takaful model?",
+    "options": [
+      "An agent managing the fund in exchange for an agreed agency fee",
+      "A sole owner of all Tabarru' funds",
+      "A partner sharing 100% of all underwriting losses",
+      "A guarantor providing non-refundable loans"
+    ],
+    "correct": 0,
+    "explanation": "In a Wakalah model, the operator acts as an agent (Wakeel) managing investments and claims on behalf of participants for a defined fee."
+  }
+]
