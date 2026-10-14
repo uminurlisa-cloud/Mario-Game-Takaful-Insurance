@@ -3,41 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Takaful & Insurance Quest - Commercial Edition</title>
+  <title>Takaful & Insurance Quest 3D</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body { background: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; color: #fff; overflow: hidden; }
-    #game-container { position: relative; width: 900px; height: 500px; max-width: 100vw; max-height: 100vh; background: #000; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); overflow: hidden; }
+    body { background: #0f172a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; color: #fff; }
+    #game-container { position: relative; width: 100vw; height: 100vh; }
     canvas { width: 100%; height: 100%; display: block; }
-    .hud { position: absolute; top: 15px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); pointer-events: none; }
-    .modal { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.92); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; backdrop-filter: blur(8px); }
+    .hud { position: absolute; top: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 6px rgba(0,0,0,0.9); pointer-events: none; z-index: 10; }
+    .modal { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.92); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; backdrop-filter: blur(8px); z-index: 100; }
     .modal.active { display: flex; }
-    .modal-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 16px; padding: 25px; width: 100%; max-width: 600px; box-shadow: 0 10px 30px rgba(56,189,248,0.2); }
-    .modal h2 { color: #38bdf8; margin-bottom: 15px; font-size: 22px; }
-    .modal p { font-size: 16px; line-height: 1.5; color: #cbd5e1; margin-bottom: 20px; }
+    .modal-card { background: #1e293b; border: 2px solid #38bdf8; border-radius: 16px; padding: 25px; width: 100%; max-width: 550px; box-shadow: 0 10px 30px rgba(56,189,248,0.3); }
+    .modal h2 { color: #38bdf8; margin-bottom: 12px; font-size: 20px; }
+    .modal p { font-size: 15px; line-height: 1.5; color: #cbd5e1; margin-bottom: 18px; }
     .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-    .btn-option { background: #334155; border: 1px solid #475569; color: #fff; padding: 12px 18px; border-radius: 8px; font-size: 15px; cursor: pointer; text-align: left; transition: all 0.2s; }
+    .btn-option { background: #334155; border: 1px solid #475569; color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; text-align: left; transition: all 0.2s; }
     .btn-option:hover { background: #0284c7; border-color: #38bdf8; }
-    .explanation { background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #38bdf8; font-size: 14px; text-align: left; color: #94a3b8; display: none; margin-bottom: 15px; }
-    .btn-action { background: #10b981; color: #fff; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; display: none; }
-    .mobile-controls { position: absolute; bottom: 15px; left: 15px; right: 15px; display: flex; justify-content: space-between; pointer-events: none; }
-    .touch-btn { background: rgba(255,255,255,0.25); border: 2px solid rgba(255,255,255,0.4); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: white; pointer-events: auto; }
+    .explanation { background: #0f172a; padding: 12px; border-radius: 8px; border-left: 4px solid #38bdf8; font-size: 13px; text-align: left; color: #94a3b8; display: none; margin-bottom: 15px; }
+    .btn-action { background: #10b981; color: #fff; border: none; padding: 12px 28px; font-size: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; display: none; }
+    .mobile-controls { position: absolute; bottom: 25px; left: 20px; right: 20px; display: flex; justify-content: space-between; pointer-events: none; z-index: 10; }
+    .touch-btn { background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.4); width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; color: white; pointer-events: auto; }
   </style>
+  <!-- Three.js 3D WebGL Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
 <div id="game-container">
-  <canvas id="gameCanvas" width="900" height="500"></canvas>
-  
   <div class="hud">
     <div>SCORE: <span id="scoreText" style="color: #facc15;">0</span></div>
     <div>SHIELD: <span id="shieldText" style="color: #38bdf8;">INACTIVE</span></div>
-    <div>PROGRESS: <span id="progressText" style="color: #4ade80;">0/4</span></div>
+    <div>PROGRESS: <span id="progressText" style="color: #4ade80;">0/2</span></div>
   </div>
 
   <div id="quizModal" class="modal">
     <div class="modal-card">
-      <h2 id="quizTitle">TAKAFUL & INSURANCE QUESTION</h2>
+      <h2 id="quizTitle">TAKAFUL 3D QUIZ</h2>
       <p id="questionText">Loading Question...</p>
       <div id="optionsContainer" class="options-grid"></div>
       <div id="explanationBox" class="explanation"></div>
@@ -46,7 +46,7 @@
   </div>
 
   <div class="mobile-controls">
-    <div style="display: flex; gap: 10px;">
+    <div style="display: flex; gap: 12px;">
       <div class="touch-btn" id="btnLeft">◀</div>
       <div class="touch-btn" id="btnRight">▶</div>
     </div>
@@ -55,141 +55,134 @@
 </div>
 
 <script>
-  // Game Audio Synth (Zero external audio assets required)
+  // Web Audio Synth for 8-bit sound effects
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   function playSound(type) {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-    
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
     if (type === 'jump') {
-      osc.frequency.setValueAtTime(150, now);
-      osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+      osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
       gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.15);
       osc.start(now); osc.stop(now + 0.15);
     } else if (type === 'correct') {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(400, now);
-      osc.frequency.setValueAtTime(600, now + 0.1);
+      osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(600, now + 0.1);
       gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
       osc.start(now); osc.stop(now + 0.3);
     } else if (type === 'wrong') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(200, now);
-      osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+      osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(100, now + 0.3);
       gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
       osc.start(now); osc.stop(now + 0.3);
     }
   }
 
-  // Load Question Bank from External JSON
+  // Load Question Bank
   let questionBank = [];
   fetch('questions.json')
     .then(res => res.json())
     .then(data => { questionBank = data; })
     .catch(() => {
-      // Fallback in case JSON is loaded directly from local file protocol
       questionBank = [
         {
           question: "What is the primary core principle that differentiates Takaful from Conventional Insurance?",
-          options: ["Mutual assistance and shared risk (Tabarru')", "Risk transfer to a commercial entity", "Guaranteed fixed monetary returns", "Unilateral profit contract"],
+          options: ["Mutual assistance and shared risk (Tabarru')", "Risk transfer to a commercial entity", "Guaranteed fixed returns", "Unilateral profit contract"],
           correct: 0,
           explanation: "Takaful relies on Tabarru' (donation) and mutual indemnity among participants."
+        },
+        {
+          question: "Under Conventional Insurance, what does the principle of 'Indemnity' ensure?",
+          options: ["Receives payout higher than loss", "Restored to the same financial position as before the loss", "Earns interest on premiums", "Void contract"],
+          correct: 1,
+          explanation: "Indemnity restores the insured to their exact financial standing prior to the loss."
         }
       ];
     });
 
-  // Canvas Setup & State
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  
-  let score = 0, questionsAnswered = 0, currentQuestionIndex = 0, isShielded = false, isPaused = false;
-  
-  const player = { x: 50, y: 350, width: 32, height: 48, vx: 0, vy: 0, grounded: false, speed: 4, jumpPower: -11 };
-  const gravity = 0.5;
+  // THREE.JS 3D SCENE SETUP
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0f172a);
+  scene.fog = new THREE.FogExp2(0x0f172a, 0.03);
 
-  const platforms = [
-    { x: 0, y: 440, w: 1200, h: 60, type: 'ground' },
-    { x: 220, y: 320, w: 120, h: 20, type: 'platform' },
-    { x: 450, y: 240, w: 140, h: 20, type: 'platform' }
-  ];
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  document.getElementById('game-container').appendChild(renderer.domElement);
 
-  const blocks = [
-    { x: 260, y: 200, w: 40, h: 40, questionIdx: 0, active: true },
-    { x: 500, y: 120, w: 40, h: 40, questionIdx: 1, active: true }
-  ];
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambientLight);
 
-  const keys = { left: false, right: false, up: false };
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(10, 20, 15);
+  dirLight.castShadow = true;
+  scene.add(dirLight);
 
-  // Keyboard Listeners
+  // 3D Ground
+  const groundGeo = new THREE.BoxGeometry(60, 2, 10);
+  const groundMat = new THREE.MeshStandardMaterial({ color: 0x1e293b });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.position.set(0, -1, 0);
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // 3D Player Mesh
+  const playerGeo = new THREE.CylinderGeometry(0.5, 0.5, 1.6, 16);
+  const playerMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
+  const playerMesh = new THREE.Mesh(playerGeo, playerMat);
+  playerMesh.castShadow = true;
+  scene.add(playerMesh);
+
+  // Player Physics Variables
+  let playerPos = { x: -20, y: 0.8, z: 0 };
+  let playerVel = { x: 0, y: 0 };
+  let isGrounded = true;
+  let isShielded = false;
+  let score = 0, answeredCount = 0, isPaused = false;
+
+  // 3D Question Blocks
+  const blocks = [];
+  function createQuestionBlock(x, y, questionIdx) {
+    const blockGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+    const blockMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, metalness: 0.3, roughness: 0.2 });
+    const mesh = new THREE.Mesh(blockGeo, blockMat);
+    mesh.position.set(x, y, 0);
+    mesh.castShadow = true;
+    scene.add(mesh);
+    blocks.push({ mesh, x, y, questionIdx, active: true });
+  }
+
+  createQuestionBlock(-8, 3.2, 0);
+  createQuestionBlock(8, 3.2, 1);
+
+  // Controls Listener
+  const keys = { left: false, right: false };
   window.addEventListener('keydown', e => {
     if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
     if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-    if ((e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') && player.grounded) {
-      keys.up = true; player.vy = player.jumpPower; player.grounded = false; playSound('jump');
+    if ((e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') && isGrounded) {
+      playerVel.y = 0.22; isGrounded = false; playSound('jump');
     }
   });
-
   window.addEventListener('keyup', e => {
     if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
     if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-    if (e.code === 'ArrowUp' || e.code === 'Space' || e.code === 'KeyW') keys.up = false;
   });
 
-  // Touch Listeners
   const bindTouch = (id, key) => {
     const el = document.getElementById(id);
-    el.addEventListener('touchstart', (e) => { e.preventDefault(); if(key==='up' && player.grounded) { player.vy = player.jumpPower; player.grounded = false; playSound('jump'); } else { keys[key] = true; } });
+    el.addEventListener('touchstart', (e) => { e.preventDefault(); if(key==='up' && isGrounded) { playerVel.y = 0.22; isGrounded = false; playSound('jump'); } else { keys[key] = true; } });
     el.addEventListener('touchend', (e) => { e.preventDefault(); if(key!=='up') keys[key] = false; });
   };
   bindTouch('btnLeft', 'left'); bindTouch('btnRight', 'right'); bindTouch('btnJump', 'up');
 
-  // Game Physics Loop
-  function update() {
-    if (isPaused) return;
-
-    if (keys.left) player.vx = -player.speed;
-    else if (keys.right) player.vx = player.speed;
-    else player.vx *= 0.8;
-
-    player.vy += gravity;
-    player.x += player.vx;
-    player.y += player.vy;
-
-    // Platform Collisions
-    player.grounded = false;
-    platforms.forEach(p => {
-      if (player.x < p.x + p.w && player.x + player.width > p.x &&
-          player.y + player.height > p.y && player.y + player.height - player.vy <= p.y) {
-        player.y = p.y - player.height;
-        player.vy = 0;
-        player.grounded = true;
-      }
-    });
-
-    // Question Block Collisions (Hit from bottom)
-    blocks.forEach(b => {
-      if (b.active && player.x < b.x + b.w && player.x + player.width > b.x &&
-          player.y < b.y + b.h && player.y + player.height > b.y) {
-        if (player.vy < 0 && player.y > b.y + b.h - 12) {
-          player.vy = 2;
-          triggerQuiz(b);
-        }
-      }
-    });
-
-    // Screen Boundaries
-    if (player.x < 0) player.x = 0;
-    if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
-  }
-
+  // Quiz Modal Logic
+  let currentBlock = null;
   function triggerQuiz(block) {
     isPaused = true;
-    currentQuestionBlock = block;
+    currentBlock = block;
     const qData = questionBank[block.questionIdx % questionBank.length];
-    
+
     document.getElementById('questionText').innerText = qData.question;
     const optionsDiv = document.getElementById('optionsContainer');
     optionsDiv.innerHTML = '';
@@ -210,28 +203,28 @@
   function handleAnswer(selectedIndex, correctIndex, explanationText) {
     const btns = document.querySelectorAll('.btn-option');
     btns.forEach(b => b.style.pointerEvents = 'none');
-
     const expBox = document.getElementById('explanationBox');
-    expBox.style.display = 'block';
-    expBox.innerText = explanationText;
+    expBox.style.display = 'block'; expBox.innerText = explanationText;
 
     if (selectedIndex === correctIndex) {
       playSound('correct');
       btns[selectedIndex].style.background = '#10b981';
-      score += 250;
+      score += 500;
       isShielded = true;
+      playerMat.color.setHex(0x38bdf8);
       document.getElementById('scoreText').innerText = score;
-      document.getElementById('shieldText').innerText = 'ACTIVE (100%)';
-      document.getElementById('shieldText').style.color = '#10b981';
+      document.getElementById('shieldText').innerText = 'ACTIVE (3D AURA)';
+      document.getElementById('shieldText').style.color = '#38bdf8';
     } else {
       playSound('wrong');
       btns[selectedIndex].style.background = '#ef4444';
       btns[correctIndex].style.background = '#10b981';
     }
 
-    currentQuestionBlock.active = false;
-    questionsAnswered++;
-    document.getElementById('progressText').innerText = `${questionsAnswered}/4`;
+    currentBlock.active = false;
+    currentBlock.mesh.material.color.setHex(0x475569);
+    answeredCount++;
+    document.getElementById('progressText').innerText = `${answeredCount}/2`;
     document.getElementById('nextBtn').style.display = 'inline-block';
   }
 
@@ -240,47 +233,59 @@
     isPaused = false;
   }
 
-  // Render Loop
-  function draw() {
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Animation & Physics Loop
+  function animate() {
+    requestAnimationFrame(animate);
 
-    // Draw Platforms
-    platforms.forEach(p => {
-      ctx.fillStyle = p.type === 'ground' ? '#1e293b' : '#334155';
-      ctx.fillRect(p.x, p.y, p.w, p.h);
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(p.x, p.y, p.w, 4);
-    });
+    if (!isPaused) {
+      // Move Player
+      if (keys.left) playerVel.x = -0.12;
+      else if (keys.right) playerVel.x = 0.12;
+      else playerVel.x *= 0.8;
 
-    // Draw ? Blocks
-    blocks.forEach(b => {
-      ctx.fillStyle = b.active ? '#facc15' : '#475569';
-      ctx.fillRect(b.x, b.y, b.w, b.h);
-      ctx.fillStyle = '#000';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText(b.active ? '?' : '✓', b.x + 14, b.y + 27);
-    });
+      playerVel.y -= 0.009; // Gravity
+      playerPos.x += playerVel.x;
+      playerPos.y += playerVel.y;
 
-    // Draw Player
-    ctx.fillStyle = isShielded ? '#38bdf8' : '#ef4444';
-    ctx.fillRect(player.x, player.y, player.width, player.height);
-    
-    // Shield aura
-    if (isShielded) {
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(player.x - 4, player.y - 4, player.width + 8, player.height + 8);
+      // Ground Collision
+      if (playerPos.y <= 0.8) {
+        playerPos.y = 0.8;
+        playerVel.y = 0;
+        isGrounded = true;
+      }
+
+      // Check ? Block Collision from below
+      blocks.forEach(b => {
+        b.mesh.rotation.y += 0.02; // Rotate blocks in 3D
+        if (b.active && Math.abs(playerPos.x - b.x) < 1.0 && Math.abs(playerPos.y - (b.y - 1.0)) < 0.4 && playerVel.y > 0) {
+          playerVel.y = -0.05;
+          triggerQuiz(b);
+        }
+      });
+
+      // Bound Player inside world
+      if (playerPos.x < -28) playerPos.x = -28;
+      if (playerPos.x > 28) playerPos.x = -28;
+
+      playerMesh.position.set(playerPos.x, playerPos.y, playerPos.z);
+
+      // Smooth Following Camera
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, playerPos.x, 0.08);
+      camera.position.y = 4;
+      camera.position.z = 10;
+      camera.lookAt(camera.position.x, 1.5, 0);
     }
+
+    renderer.render(scene, camera);
   }
 
-  function gameLoop() {
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
-  }
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 
-  gameLoop();
+  animate();
 </script>
 </body>
 </html>
